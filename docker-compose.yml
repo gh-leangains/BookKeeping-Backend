@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  # BookKeeping Backend Application
+  bookkeeping-backend:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=bookkeeping
+      - DB_USERNAME=bookkeeping
+      - DB_PASSWORD=password123
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - bookkeeping-network
+    restart: unless-stopped
+
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=bookkeeping
+      - MYSQL_USER=bookkeeping
+      - MYSQL_PASSWORD=password123
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - bookkeeping-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # PostgreSQL Database (alternative to MySQL)
+  postgres:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=bookkeeping
+      - POSTGRES_USER=bookkeeping
+      - POSTGRES_PASSWORD=password123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - bookkeeping-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bookkeeping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    profiles:
+      - postgres
+
+  # Redis for caching (optional)
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - bookkeeping-network
+    restart: unless-stopped
+    profiles:
+      - cache
+
+  # MailHog for email testing
+  mailhog:
+    image: mailhog/mailhog:latest
+    ports:
+      - "1025:1025"  # SMTP port
+      - "8025:8025"  # Web UI port
+    networks:
+      - bookkeeping-network
+    restart: unless-stopped
+    profiles:
+      - mail
+
+volumes:
+  mysql_data:
+  postgres_data:
+  redis_data:
+
+networks:
+  bookkeeping-network:
+    driver: bridge
