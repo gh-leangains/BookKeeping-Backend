@@ -28,7 +28,7 @@ This document contains the comprehensive GitHub Issues created for the MathsQues
 ## Sprint Planning Recommendations
 
 ### Sprint 1 (Weeks 1-2): Foundation - 21 Story Points
-- Issue #11: Project Infrastructure Setup
+- Issue #12: Project Infrastructure and Development Environment Setup
 - Issue #3: Student Registration and Login (8 points)
 - Issue #4: Avatar Selection System (5 points)
 
