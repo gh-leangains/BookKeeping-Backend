@@ -21,7 +21,7 @@ This document contains the comprehensive GitHub Issues created for the MathsQues
 - **Issue #10**: [User Story: Gamification and Reward System](https://github.com/gh-leangains/BookKeeping-Backend/issues/10) - 21 story points
 
 ### Technical Infrastructure
-- **Issue #11**: [Technical Story: Project Infrastructure Setup](https://github.com/gh-leangains/BookKeeping-Backend/issues/11) - Technical foundation
+- **Issue #11**: [Technical Story: Project Infrastructure Setup](https://github.com/LeanGains/education-games/issues/11) - Technical foundation
 
 ## Total Story Points: 107
 
